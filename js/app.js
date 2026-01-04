@@ -1,12 +1,22 @@
 import { lerp } from "./utils.js";
 import { createProjects, createBlogposts } from "./projects.js";
 
+// Utility to detect touch devices
+function isTouchDevice() {
+  return (
+    "ontouchstart" in window ||
+    navigator.maxTouchPoints > 0 ||
+    navigator.msMaxTouchPoints > 0
+  );
+}
+
 // Initialize Lenis for <main> scroll container
 const lenis = new Lenis({
   wrapper: document.querySelector("main"),
   content: document.querySelector("main"),
   smooth: true,
   duration: 2.0,
+  touchMultiplier: 1
 });
 
 function raf(time) {
@@ -16,22 +26,28 @@ function raf(time) {
 requestAnimationFrame(raf);
 
 const cursor = document.querySelector(".cursor");
-let cursorTarget = { x: window.innerWidth * 0.5, y: window.innerHeight * 0.5 };
-let cursorCurrent = { x: cursorTarget.x, y: cursorTarget.y };
 
-window.addEventListener("mousemove", (e) => {
-  cursorTarget.x = e.clientX;
-  cursorTarget.y = e.clientY;
-});
+if (cursor && isTouchDevice()) {
+  // Remove the cursor on touch devices
+  cursor.parentNode.removeChild(cursor);
+} else if (cursor) {
+  let cursorTarget = { x: 0, y: 0 };
+  let cursorCurrent = { x: cursorTarget.x, y: cursorTarget.y };
 
-function animateCursor() {
-  cursorCurrent.x = lerp(cursorCurrent.x, cursorTarget.x, 0.18);
-  cursorCurrent.y = lerp(cursorCurrent.y, cursorTarget.y, 0.18);
-  cursor.style.left = cursorCurrent.x + "px";
-  cursor.style.top = cursorCurrent.y + "px";
-  requestAnimationFrame(animateCursor);
+  window.addEventListener("mousemove", (e) => {
+    cursorTarget.x = e.clientX;
+    cursorTarget.y = e.clientY;
+  });
+
+  function animateCursor() {
+    cursorCurrent.x = lerp(cursorCurrent.x, cursorTarget.x, 0.18);
+    cursorCurrent.y = lerp(cursorCurrent.y, cursorTarget.y, 0.18);
+    cursor.style.left = cursorCurrent.x + "px";
+    cursor.style.top = cursorCurrent.y + "px";
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
 }
-animateCursor();
 
 document.querySelectorAll(".content__container").forEach((container) => {
   const inv = container.querySelector(".invChar__Container");

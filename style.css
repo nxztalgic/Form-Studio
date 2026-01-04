@@ -32,6 +32,14 @@ body {
     background: var(--bg-black);
     color: var(--color-white);
     font-family: "Inter", sans-serif;
+    /* Hide scrollbar for all browsers */
+    scrollbar-width: none;       /* Firefox */
+    -ms-overflow-style: none;    /* IE and Edge */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 .cursor {
@@ -150,6 +158,11 @@ main {
     height: 100%;
     display: flex;
     overflow-y: scroll;
+    scrollbar-width: none;      /* Firefox */
+    -ms-overflow-style: none;   /* IE and Edge */
+}
+main::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 section {
